@@ -8,12 +8,10 @@ app.get('/', (req, res)=>{
 
 io.on('connection', socket => {
 	socket.on('chat message', function(msg){
-		console.log('ok');
 	    io.emit('chat message', msg);
 	});
-	socket.on('join', function(name){
-		console.log(name);
-	    io.emit('chat message', name + ' has joined');
+	socket.on('join', function(name){		
+	    io.emit('join', name + ' has joined');
 	});
 })
 
