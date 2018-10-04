@@ -4,17 +4,43 @@
   <title>chat</title>
   <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font: 2em Helvetica, Arial; }
-  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
-  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; font-size: 20px;}
-  form button { width: 9%; background:red; border: none; padding: 10px; font-size: 20px; color: #fff;}
+  body { font: 1.5em Helvetica, Arial; max-width: 700px; margin: 0px auto; position: relative; padding-bottom: 50px;}
+  form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; max-width: 700px;}
+  form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+  form button { width: 9%; background: red; color: #fff; border: none; padding: 10px; }
   #messages { list-style-type: none; margin: 0; padding: 0; }
-  #messages li { padding: 5px 10px; }
+  input, button{
+    font-size: 20px;
+  }
+  #messages li { 
+  	padding: 5px 10px; 
+  	display: flex; 
+  	flex-direction: column-reverse;
+  	border-radius: 10px;
+  }
   #messages li:nth-child(odd) { background: #eee; }
+  .join{
+  	text-align: center;
+    background: pink !important;
+    border-radius: 10px;
+    font-size: 16px;
+    max-width: 400px;
+    margin: 0px auto;
+  }
+  span{
+    color: green;
+    float: left;
+    font-size: 15px;
+    margin-right: 15px;
+  }
 </style>
 <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
+  <audio id="myAudio">
+  <source src="/sound.ogg" type="audio/ogg">
+  Your browser does not support the audio tag.
+</audio>
   <ul id="messages"></ul>
   <form id="form">
     <input id="m" autocomplete="off" /><button>Send</button>
@@ -25,26 +51,46 @@
       alert('You must provide a name! Refresh page');
     }
     var socket = io();
-    setTimeout(()=>{
-      socket.emit('join', name);
-      console.log(name);
-    }, 1000);
+    socket.emit('join', name);
     var form = document.getElementById('form')
     var m = document.getElementById('m');
     var messages = document.getElementById('messages');
+    var x = document.getElementById("myAudio"); 
 
     form.onsubmit = e => {
       e.preventDefault();
-      socket.emit('chat message', m.value);
+      if(!m.value) return;
+      socket.emit('chat message', {
+        name, value: m.value
+      });
       m.value = '';
       return false;
     }
 
     socket.on('chat message', msg => {
+      console.log(msg);
       var li = document.createElement('li');
-      li.innerHTML = name + ': ' + msg;
+      var span = document.createElement('span');
+      li.innerHTML = msg.value;
+      span.innerHTML = msg.name;
+      li.appendChild(span);
       messages.appendChild(li);
+      playSound();
     });
+
+    socket.on('join', name => {
+      var li = document.createElement('li');
+      li.innerHTML = name;
+      li.classList.add('join');
+      messages.appendChild(li);
+      playSound();
+    });
+    m.focus();
+    const playSound = () => {
+      x.pause();
+      x.currentTime = 0;
+      x.play();
+    }
   </script>
 </body>
 </html>
