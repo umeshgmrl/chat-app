@@ -8,15 +8,13 @@ app.get('/', (req, res)=>{
 
 io.on('connection', socket => {
 	socket.on('chat message', function(msg){
-		console.log('ok');
 	    io.emit('chat message', msg);
 	});
 	socket.on('join', function(name){
-		console.log(name);
 	    io.emit('chat message', name + ' has joined');
 	});
 })
 
-http.listen(3000, ()=>{
-	console.log('listening on 3000');
+http.listen(3005, ()=>{
+	console.log('listening on 3005');
 })
