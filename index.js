@@ -19,6 +19,6 @@ io.on('connection', socket => {
 	});
 })
 
-http.listen(3005, ()=>{
-	console.log('listening on 3005');
+http.listen(3006, ()=>{
+	console.log('listening on 3006');
 })
