@@ -1,0 +1,5 @@
+.MessageList {
+	max-height: 90vh;
+	overflow-y: scroll;
+	padding: 20px;
+}

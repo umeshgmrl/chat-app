@@ -1,0 +1,8 @@
+.OnlineList {
+	position: fixed;
+	right: 20px;
+	top: 20px;
+}
+.tag {
+	margin-bottom: 5px;
+}
