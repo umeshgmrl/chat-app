@@ -12,7 +12,9 @@ class App extends Component {
 	state = {
 		users: [],
 		messages: [],
-		showModal: true
+		showModal: true,
+		message: "",
+		username: ""
 	};
 
 	componentDidMount() {
@@ -25,24 +27,26 @@ class App extends Component {
 		});
 
 		socket.on("usernames", function(data) {
-			socket.on("get_user", function(user) {
-				const { users } = this1.state;
-				users.push(user);
-				this1.setState({ users });
-			});
-			socket.emit("getUser");
+			this1.setState({
+				users: data
+			})
 		});
 	}
 
 	sendMessage = e => {
 		if (e) e.preventDefault();
-		socket.emit("send_message", "Hello shhrbeh", new Date());
+		const { message } = this.state;
+		if (!message) return;
+		socket.emit("send_message", message, new Date());
+		this.setState({
+			message: ""
+		})
 	};
 
 	addNewUser = e => {
 		const this1 = this;
 		e.preventDefault();
-		socket.emit("add_new_user", "Bhumesh", function(data) {
+		socket.emit("add_new_user", this.state.username, function(data) {
 			this1.sendMessage();
 			this1.setState({
 				showModal: false
@@ -50,16 +54,29 @@ class App extends Component {
 		});
 	};
 
+	handleInput = e => {
+		this.setState({
+			message: e.target.value
+		});
+	};
+
+	handleUserName = e => {
+		this.setState({
+			username: e.target.value
+		});
+	};
+
 	render() {
 		const { messages, users, showModal } = this.state;
-		console.log(this.state);
 		return (
 			<div className="App container">
 				<MessageList messages={messages} />
 				<br />
-				<InputBar onSubmit={this.sendMessage} />
+				<InputBar onSubmit={this.sendMessage} onChange={this.handleInput}  value={this.state.message}/>
 				<OnlineList users={users} />
-				{showModal && <Modal onSubmit={this.addNewUser} />}
+				{showModal && (
+					<Modal onSubmit={this.addNewUser} onChange={this.handleUserName}/>
+				)}
 			</div>
 		);
 	}

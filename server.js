@@ -17,7 +17,6 @@ app.get("/", (req, res, next) => {
 io.sockets.on("connection", socket => {
     socket.on("add_new_user", (data, cb) => {
         socket.username = data;
-
         if (usernames.indexOf(data) !== -1) {
             cb(false);
         } else {
